@@ -1,9 +1,11 @@
 .homescreen {
 	display: flex;
 	justify-content: center;
+	flex-direction: column;
 
 	.main-heading {
-		font-size: 5vw;
+		font-size: 3vw;
 		font-family: "Open Sans", sans-serif;
+		color: rgb(31, 30, 30);
 	}
 }
