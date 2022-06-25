@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useState, Fragment } from "react";
-// import ReactPlayer from "react-player";
+import VideoPlayer from "../videoplayer/videoplayer.component";
 
-const VideoPlayer = () => {
-	// const [videoFile, setVideoFile] = useState();
+const PlayerLogic = () => {
+	const [videoFile, setVideoFile] = useState([]);
 	const [locationDir, setLocationDir] = useState("");
+	const [count, setCount] = useState(0);
 
 	// const videoFileHandler = (event) => {
 	// 	console.log(event.target.files);
@@ -14,6 +15,11 @@ const VideoPlayer = () => {
 
 	const resetInput = () => {
 		setLocationDir("");
+		setVideoFile([]);
+		axios
+			.post("http://localhost:3001/reset")
+			.then((res) => console.log(res.data))
+			.catch((err) => console.log(err));
 	};
 
 	const inputHandler = (event) => {
@@ -24,8 +30,14 @@ const VideoPlayer = () => {
 		event.preventDefault();
 		axios
 			.post("http://localhost:3001/setLocation", { locationDir })
-			.then((res) => console.log(res.data))
+			.then((res) => {
+				setVideoFile(res.data);
+			})
 			.catch((err) => console.log(err.response.data));
+	};
+
+	const videoChooser = (event) => {
+		setCount(event.target.name);
 	};
 
 	return (
@@ -57,16 +69,23 @@ const VideoPlayer = () => {
 				</div>
 			</form>
 
-			{/* <input type="file" onChange={videoFileHandler} multiple />
-			<ReactPlayer
-				className="video-player"
-				url={videoFile}
-				width="50%"
-				height="50%"
-				controls={true}
-			/> */}
+			<div className="btn-group-vertical">
+				{videoFile.map((file, index) => {
+					return (
+						<button
+							type="button"
+							className="btn btn-primary"
+							name={index}
+							onClick={videoChooser}
+						>
+							{file}
+						</button>
+					);
+				})}
+			</div>
+			<VideoPlayer id={count} />
 		</Fragment>
 	);
 };
 
-export default VideoPlayer;
+export default PlayerLogic;

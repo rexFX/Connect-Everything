@@ -22,6 +22,7 @@ step 5: jab wo ek index pe click kare tab backend me wo index and array bhejo an
 
 let files = [];
 let msg = '';
+let absolutePathToTheMediaFile = '';
 
 const fileAdder = (location) => {
   try {
@@ -44,10 +45,14 @@ app.post('/setLocation', (req, res) => {
   // console.log('in express', location);
   files = [];
   msg = '';
+  absolutePathToTheMediaFile = '';
   const dir = req.body.locationDir;
   if (dir.length > 0) {
     fileAdder(req.body.locationDir);
-    if (files.length) res.json(files);
+    if (files.length) {
+      absolutePathToTheMediaFile = dir;
+      res.json(files);
+    }
     else res.status(404).send(msg);
   }
   else {
@@ -62,8 +67,23 @@ app.get('/', (req, res) => {
   else res.send('Empty');
 });
 
-app.get('/video', function (req, res) {
-  const vidPath = path.relative(__dirname, absolutePathToTheMediaFile);
+
+// app.get('/test/:id', (req, res) => {
+//   console.log(req.params.id);
+//   console.log(files[req.params.id]);
+//   console.log(path.relative(__dirname, absolutePathToTheMediaFile) + '/' + files[req.params.id]);
+// })
+
+app.post('/reset', (req, res) => {
+  files = [];
+  msg = '';
+  absolutePathToTheMediaFile = '';
+  res.send('cleared');
+});
+
+app.get('/videos/:id', function (req, res) {
+  const vidPath = path.relative(__dirname, absolutePathToTheMediaFile) + '/' + files[req.params.id];
+  console.log(vidPath);
   const stat = fs.statSync(vidPath)
   const fileSize = stat.size
   const range = req.headers.range
@@ -73,6 +93,14 @@ app.get('/video', function (req, res) {
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+    if (!isNaN(start) && isNaN(end)) {
+      end = size - 1;
+    }
+    if (isNaN(start) && !isNaN(end)) {
+      start = fileSize - end;
+      end = fileSize - 1;
+    }
 
     if (start >= fileSize) {
       res.status(416).send('Requested range not satisfiable\n' + start + ' >= ' + fileSize);
