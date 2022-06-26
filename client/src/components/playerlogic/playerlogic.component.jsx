@@ -8,6 +8,11 @@ const PlayerLogic = () => {
 	const [filePresent, setFilePresent] = useState(false);
 	const [locationDir, setLocationDir] = useState("");
 	const [count, setCount] = useState(0);
+	const [serverIP, setServerIP] = useState("");
+	const [serverPort, setServerPort] = useState("");
+	const [checkIPandPort, setCheckIPandPort] = useState(false);
+	const [tempIP, setTempIP] = useState("");
+	const [tempPort, setTempPort] = useState("");
 
 	// const videoFileHandler = (event) => {
 	// 	console.log(event.target.files);
@@ -20,19 +25,60 @@ const PlayerLogic = () => {
 		setVideoFile([]);
 		setFilePresent(false);
 		axios
-			.post("http://192.168.1.6:3001/reset")
+			.post(`http://${serverIP}:${serverPort}/reset`)
 			.then((res) => console.log(res.data))
 			.catch((err) => console.log(err));
 	};
 
-	const inputHandler = (event) => {
+	const inputLocationHandler = (event) => {
 		setLocationDir(event.target.value);
+	};
+
+	const inputIPHandler = (event) => {
+		setTempIP(event.target.value);
+	};
+
+	const inputPortHandler = (event) => {
+		setTempPort(event.target.value);
+	};
+
+	const ipAndPortSubmit = (event) => {
+		event.preventDefault();
+		if (!tempIP || !tempPort) {
+			alert("Add valid IP and Port");
+		} else {
+			axios
+				.get(`http://${tempIP}:${tempPort}/`)
+				.then((res) => {
+					if (res.data === "Connected") {
+						alert("Connected!");
+						setServerIP(tempIP);
+						setServerPort(tempPort);
+						setCheckIPandPort(true);
+					} else {
+						alert("IP and Port incorrect");
+						ipPortAndBelowReset();
+					}
+				})
+				.catch((err) => alert("Invalid URL"));
+		}
+	};
+
+	const ipPortAndBelowReset = () => {
+		setServerIP("");
+		setServerPort("");
+		setTempPort("");
+		setTempIP("");
+		setCheckIPandPort(false);
+		resetInput();
 	};
 
 	const locationSubmit = (event) => {
 		event.preventDefault();
 		axios
-			.post("http://192.168.1.6:3001/setLocation", { locationDir })
+			.post(`http://${serverIP}:${serverPort}/setLocation`, {
+				locationDir,
+			})
 			.then((res) => {
 				setVideoFile(res.data);
 				setFilePresent(true);
@@ -47,17 +93,28 @@ const PlayerLogic = () => {
 
 	return (
 		<Fragment>
-			<form onSubmit={locationSubmit}>
+			<form onSubmit={ipAndPortSubmit}>
 				<div className="mb-3">
-					<label htmlFor="locationInput" className="form-label">
-						Enter the absolute path of directory
+					<label htmlFor="ipInput" className="form-label">
+						Enter Local or Public IP of the server (without
+						'http://')
 					</label>
 					<input
-						id="locationInput"
+						id="ipInput"
 						className="form-control"
 						type="text"
-						value={locationDir}
-						onChange={inputHandler}
+						value={tempIP}
+						onChange={inputIPHandler}
+					/>
+					<label htmlFor="portInput" className="form-label">
+						Enter port of the server
+					</label>
+					<input
+						id="portInput"
+						className="form-control"
+						type="text"
+						value={tempPort}
+						onChange={inputPortHandler}
 					/>
 				</div>
 				<div className="d-flex justify-content-between">
@@ -66,13 +123,42 @@ const PlayerLogic = () => {
 					</button>
 					<button
 						className="btn btn-secondary border border-3"
-						onClick={resetInput}
+						onClick={ipPortAndBelowReset}
 						type="button"
 					>
 						Reset
 					</button>
 				</div>
 			</form>
+
+			{checkIPandPort && (
+				<form onSubmit={locationSubmit}>
+					<div className="mb-3">
+						<label htmlFor="locationInput" className="form-label">
+							Enter the absolute path of directory
+						</label>
+						<input
+							id="locationInput"
+							className="form-control"
+							type="text"
+							value={locationDir}
+							onChange={inputLocationHandler}
+						/>
+					</div>
+					<div className="d-flex justify-content-between">
+						<button className="btn btn-primary border border-3">
+							Submit
+						</button>
+						<button
+							className="btn btn-secondary border border-3"
+							onClick={resetInput}
+							type="button"
+						>
+							Reset
+						</button>
+					</div>
+				</form>
+			)}
 
 			<div className="container-sm">
 				<div className="btn-group-vertical">
@@ -93,7 +179,7 @@ const PlayerLogic = () => {
 				{filePresent && (
 					<ReactPlayer
 						className="video-player"
-						url={`http://192.168.1.6:3001/videos/${count}`}
+						url={`http://${serverIP}:${serverPort}/videos/${count}`}
 						width="50%"
 						height="50%"
 						config={{

@@ -1,7 +1,10 @@
 const express = require('express');
 const fs = require('fs');
+const os = require('os');
 const cors = require('cors');
 const path = require('path');
+const axios = require('axios');
+
 const app = express();
 
 app.use(cors());
@@ -20,9 +23,22 @@ step 5: jab wo ek index pe click kare tab backend me wo index and array bhejo an
 
 //so wo react location bhejega and server symlinks bana dega public folder me and then path ko de denge wo link whenever we play it
 
+let my_ip = '';
+let my_port = '';
+let myLocalIPs = [];
 let files = [];
 let msg = '';
 let absolutePathToTheMediaFile = '';
+
+const interfaces = os.networkInterfaces();
+for (let k in interfaces) {
+  for (let p in interfaces[k]) {
+    let addr = interfaces[k][p];
+    if (addr.family === 'IPv4' && !addr.internal) {
+      myLocalIPs.push(addr.address);
+    }
+  }
+}
 
 const fileAdder = (location) => {
   try {
@@ -64,7 +80,7 @@ app.get('/', (req, res) => {
   if (files.length) {
     res.json(files);
   }
-  else res.send('Empty');
+  else res.send('Connected');
 });
 
 
@@ -132,6 +148,14 @@ app.get('/videos/:id', function (req, res) {
   }
 });
 
-app.listen(3001, () => {
+app.listen(3001, function () {
   console.log('connected');
+  axios.get('https://api.ipify.org/?format=text')
+    .then((res) => {
+      my_ip = res.data
+      console.log('Server IP: ', my_ip);
+    })
+    .catch(err => console.log(err));
+  console.log('Local Server Addresses: ', myLocalIPs);
+  console.log('Server Port: ', this.address().port);
 });
