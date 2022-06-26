@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useState, Fragment } from "react";
-import VideoPlayer from "../videoplayer/videoplayer.component";
+import ReactPlayer from "react-player";
+import "./playerlogic.styles.scss";
 
 const PlayerLogic = () => {
 	const [videoFile, setVideoFile] = useState([]);
+	const [filePresent, setFilePresent] = useState(false);
 	const [locationDir, setLocationDir] = useState("");
 	const [count, setCount] = useState(0);
 
@@ -16,8 +18,9 @@ const PlayerLogic = () => {
 	const resetInput = () => {
 		setLocationDir("");
 		setVideoFile([]);
+		setFilePresent(false);
 		axios
-			.post("http://localhost:3001/reset")
+			.post("http://192.168.1.6:3001/reset")
 			.then((res) => console.log(res.data))
 			.catch((err) => console.log(err));
 	};
@@ -26,18 +29,20 @@ const PlayerLogic = () => {
 		setLocationDir(event.target.value);
 	};
 
-	const locationSubmit = async (event) => {
+	const locationSubmit = (event) => {
 		event.preventDefault();
 		axios
-			.post("http://localhost:3001/setLocation", { locationDir })
+			.post("http://192.168.1.6:3001/setLocation", { locationDir })
 			.then((res) => {
 				setVideoFile(res.data);
+				setFilePresent(true);
 			})
 			.catch((err) => console.log(err.response.data));
 	};
 
 	const videoChooser = (event) => {
 		setCount(event.target.name);
+		console.log(count);
 	};
 
 	return (
@@ -69,21 +74,39 @@ const PlayerLogic = () => {
 				</div>
 			</form>
 
-			<div className="btn-group-vertical">
-				{videoFile.map((file, index) => {
-					return (
-						<button
-							type="button"
-							className="btn btn-primary"
-							name={index}
-							onClick={videoChooser}
-						>
-							{file}
-						</button>
-					);
-				})}
+			<div className="container-sm">
+				<div className="btn-group-vertical">
+					{videoFile.map((file, index) => {
+						return (
+							<button
+								type="button"
+								className="btn btn-primary"
+								name={index}
+								onClick={videoChooser}
+								key={index}
+							>
+								{file}
+							</button>
+						);
+					})}
+				</div>
+				{filePresent && (
+					<ReactPlayer
+						className="video-player"
+						url={`http://192.168.1.6:3001/videos/${count}`}
+						width="50%"
+						height="50%"
+						config={{
+							file: {
+								attributes: {
+									preload: "metadata",
+								},
+							},
+						}}
+						controls={true}
+					/>
+				)}
 			</div>
-			<VideoPlayer id={count} />
 		</Fragment>
 	);
 };

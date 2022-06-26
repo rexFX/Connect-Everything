@@ -103,6 +103,9 @@ app.get('/videos/:id', function (req, res) {
     }
 
     if (start >= fileSize) {
+      console.log(start);
+      console.log(end);
+      console.log(fileSize);
       res.status(416).send('Requested range not satisfiable\n' + start + ' >= ' + fileSize);
       return;
     }
