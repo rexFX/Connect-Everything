@@ -6,11 +6,11 @@ The server is hosted locally.
 
 Go to the root directory of this project and start the server using
 
-> yarn dev
+`yarn dev`
 
 then go to client folder and start the U.I. using
 
-> yarn start
+`yarn start`
 
 Whenever you will start your server, it will provide you the IP Address, Local IP Address and Port in the terminal, use these to connect to your server using other device.
 
