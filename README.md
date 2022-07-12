@@ -4,6 +4,8 @@ A media streamer which can stream locally stored media to any other device over 
 
 The server is hosted locally.
 
+Do `yarn install` in both the root and client directory of this project.
+
 Go to the root directory of this project and start the server using
 
 `yarn dev`
