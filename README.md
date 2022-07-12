@@ -22,3 +22,7 @@ On your other device,
 > Enter the absolute path to any directory located on the server which contains some media.
 > If a media file is found, it will be listed on the website.
 > Click on its name and a player will popup which will play that file.
+
+
+
+This project is currently ongoing and I will implement more things when I will have time to do so.
