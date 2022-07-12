@@ -24,5 +24,6 @@ On your other device,
 > Click on its name and a player will popup which will play that file.
 
 
+---
 
 This project is currently ongoing and I will implement more things when I will have time to do so.
