@@ -1,20 +1,17 @@
 # **Connect Everything**
 
-A media streamer which can stream locally stored media to any other device over the network.
+A self-hosted media streaming server which can transmit locally stored media files over the internet to some
+other device.
 
-The server is hosted locally.
+Run the following commands:
 
-Do `yarn install` in both the root and client directory of this project.
+1. `yarn install` in both the root and client directory of this project.
 
-Go to the root directory of this project and start the server using
+2. Go to the root directory of this project and start the server using: `yarn dev`
 
-`yarn dev`
+3. Go to client folder and start the U.I. using: `yarn start`
 
-then go to client folder and start the U.I. using
-
-`yarn start`
-
-Whenever you will start your server, it will provide you the IP Address, Local IP Address and Port in the terminal, use these to connect to your server using other device.
+Whenever you will start your server, it will provide you the IP Address, Local IP Address and Port in the terminal, use these to connect to your server from other devices.
 
 On your other device,
 
