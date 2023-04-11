@@ -15,17 +15,17 @@ Whenever you will start your server, it will provide you the IP Address, Local I
 
 On your other device,
 
-> Connect to the client server (U.I), use the IP and Port of U.I. provided in the server's and client's terminal respectively.
+> 1. Connect to the client server (U.I), use the IP and Port of U.I. provided in the server's and client's terminal respectively.
 > 
-> Once connected to the U.I., enter the IP and Port of the server in the form.
+> 2. Once connected to the U.I., enter the IP and Port of the server in the form.
 > 
-> You will receive a "connected" alert after a successful connection.
+> 3. You will receive a "connected" alert after a successful connection.
 > 
-> Enter the absolute path to any directory located on the server which contains some media.
+> 4. Enter the absolute path to any directory located on the server which contains some media.
 > 
-> If a media file is found, it will be listed on the website.
+> 5. If a media file is found, it will be listed on the website.
 > 
-> Click on its name and a player will popup which will play that file.
+> 6. Click on its name and a player will popup which will play that file.
 
 
 ---
