@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useState, Fragment } from "react";
+import { useState } from "react";
 import ReactPlayer from "react-player";
-import "./playerlogic.styles.scss";
+import "./playerlogic.styles.css";
 
 const PlayerLogic = () => {
 	const [videoFile, setVideoFile] = useState([]);
@@ -26,6 +26,7 @@ const PlayerLogic = () => {
 		setLocationDir("");
 		setVideoFile([]);
 		setFilePresent(false);
+		setErrorText("");
 		axios
 			.post(`http://${serverIP}:${serverPort}/reset`)
 			.then((res) => console.log(res.data))
@@ -47,22 +48,22 @@ const PlayerLogic = () => {
 	const ipAndPortSubmit = (event) => {
 		event.preventDefault();
 		if (!tempIP || !tempPort) {
-			alert("Add valid IP and Port");
+			setErrorText("Add valid IP and Port");
 		} else {
 			axios
 				.get(`http://${tempIP}:${tempPort}/`)
 				.then((res) => {
 					if (res.data === "Connected") {
-						alert("Connected!");
 						setServerIP(tempIP);
 						setServerPort(tempPort);
 						setCheckIPandPort(true);
+						setErrorText("");
 					} else {
-						alert("IP and Port incorrect");
+						setErrorText("IP and Port incorrect");
 						ipPortAndBelowReset();
 					}
 				})
-				.catch((err) => alert("Invalid URL"));
+				.catch((err) => setErrorText("Invalid URL"));
 		}
 	};
 
@@ -72,6 +73,7 @@ const PlayerLogic = () => {
 		setTempPort("");
 		setTempIP("");
 		setCheckIPandPort(false);
+		setErrorText("");
 		resetInput();
 	};
 
@@ -100,43 +102,45 @@ const PlayerLogic = () => {
 	};
 
 	return (
-		<Fragment>
+		<>
 			{!checkIPandPort && (
 				<form onSubmit={ipAndPortSubmit}>
-					<div className="mb-3">
-						<label htmlFor="ipInput" className="form-label">
-							Enter Local or Public IP of the server (without
-							'http://')
-						</label>
+					<div className="font-Poppins text-center flex flex-col justify-center items-center">
 						<input
 							id="ipInput"
-							className="form-control"
+							className="w-64 h-10 p-3 rounded-md bg-slate-100 outline-gray-300 outline-1 outline-offset-1"
 							type="text"
 							value={tempIP}
+							placeholder="Local / Public IP of the Server"
 							onChange={inputIPHandler}
 						/>
-						<label htmlFor="portInput" className="form-label">
-							Enter port of the server
-						</label>
 						<input
 							id="portInput"
-							className="form-control"
+							className="w-64 h-10 rounded-md mt-2 p-3 bg-slate-100 outline-gray-300 outline-1 outline-offset-1"
 							type="text"
 							value={tempPort}
+							placeholder="Enter Port of the Server"
 							onChange={inputPortHandler}
 						/>
 					</div>
-					<div className="d-flex justify-content-between">
-						<button className="btn btn-primary border border-3">
-							Submit
-						</button>
-						<button
-							className="btn btn-secondary border border-3"
-							onClick={ipPortAndBelowReset}
-							type="button"
-						>
-							Reset
-						</button>
+					<div className="flex flex-col justify-center items-center">
+						<div className="flex justify-evenly w-[20em] mt-4 font-Poppins">
+							<button className="transition bg-red-400 w-[7em] h-[3em] hover:bg-red-600 hover:delay-50">
+								Submit
+							</button>
+							<button
+								className="transition bg-gray-400 w-[7em] h-[3em] hover:bg-slate-500 hover:delay-50"
+								onClick={ipPortAndBelowReset}
+								type="button"
+							>
+								Reset
+							</button>
+						</div>
+						{errorText.length > 0 && (
+							<div className="text-red-700 pt-6 font-Poppins">
+								{errorText}!
+							</div>
+						)}
 					</div>
 				</form>
 			)}
@@ -210,7 +214,7 @@ const PlayerLogic = () => {
 					</div>
 				)}
 			</div>
-		</Fragment>
+		</>
 	);
 };
 
