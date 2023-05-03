@@ -40,7 +40,7 @@ const fileAdder = (location) => {
     });
 
     if (files.length == 0) {
-      msg = 'No video present';
+      msg = 'No media present';
     }
     else msg = 'success'
   }
@@ -110,11 +110,7 @@ app.get('/videos/:id', function (req, res) {
     }
 
     if (start >= fileSize) {
-      console.log(start);
-      console.log(end);
-      console.log(fileSize);
       res.status(416).send('Requested range not satisfiable\n' + start + ' >= ' + fileSize);
-      return;
     }
 
     const chunksize = (end - start) + 1;
@@ -144,7 +140,7 @@ app.listen(3001, function () {
   axios.get('https://api.ipify.org/?format=text')
     .then((res) => {
       my_ip = res.data
-      console.log('Server IP: ', my_ip);
+      console.log('Server IP: ', my_ip, '\n---\n');
     })
     .catch(err => console.log('Server IP: Unable to get public IP\n---\n'));
   console.log('Local Server Addresses: ', myLocalIPs);

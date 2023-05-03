@@ -1,4 +1,7 @@
 {
+	"name": "connect_everything_server",
+	"version": "0.1.0",
+	"private": true,
 	"dependencies": {
 		"axios": "^0.27.2",
 		"cors": "^2.8.5",
@@ -7,6 +10,6 @@
 		"nodemon": "^2.0.18"
 	},
 	"scripts": {
-		"dev": "nodemon server.js"
+		"start": "nodemon server.js"
 	}
 }

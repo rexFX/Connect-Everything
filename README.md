@@ -1,33 +1,43 @@
 # **Connect Everything**
 
-A self-hosted media streaming server which can transmit locally stored media files over the internet to some
-other device.
+A self-hosted media streaming server which can transmit locally stored media files over the internet to some other device.
 
-Run the following commands:
+### Screenshots:
 
-1. `yarn install` in both the root and client directory of this project.
+-   Server
+    ![Server](/public/server.png)
 
-2. Go to the root directory of this project and start the server using: `yarn dev`
+-   Initial page
+    ![Initial page](/public/initial.png)
 
-3. Go to client folder and start the U.I. using: `yarn start`
+-   Example directory containing 3 sample videos:
+    ![Example directory](/public/eg_dir.png)
 
-Whenever you will start your server, it will provide you the IP Address, Local IP Address and Port in the terminal, use these to connect to your server from other devices.
+-   Directory Page
+    ![Directory page](/public/dir_page.png)
 
-On your other device,
+-   Media selection:
+    ![Media selection](/public/media_selection.png)
 
-1. Connect to the client server (U.I), use the IP and Port of U.I. provided in the server's and client's terminal respectively.
- 
-2. Once connected to the U.I., enter the IP and Port of the server in the form.
- 
-3. You will receive a "connected" alert after a successful connection.
- 
-4. Enter the absolute path to any directory located on the server which contains some media.
- 
-5. If a media file is found, it will be listed on the website.
- 
-6. Click on its name and a player will popup which will play that file.
+-   Media playback
+    ![playback](/public/playback.png)
 
+### To start the frontend, run the following commands:
 
----
+-   `cd client`
+-   `npm i` or `yarn`
+-   `npm start` or `yarn start`
 
-This project is currently ongoing and I will implement more things when I will have time to do so.
+### To start the server, run the following commands:
+
+-   `cd server`
+-   `npm i` or `yarn`
+-   `npm start` or `yarn start`
+
+### How to play media on other device?
+
+-   First start the server on the device which has the media files, the server will let you know the local ip, public ip and port it is running on in the terminal.
+-   Connect to the frontend, this can be started in any device. The address of the frontend would be in the terminal when you start it. By default it is `localhost:3000`.
+-   Connect to the server using the frontend, **by default it uses port 3001**. If both device are on the same network then you can use Local IP to connect. If they are on different network then you will need to open the port(s) on the host device so that the other device can connect to it using Public IP.
+-   On the next page, enter the **absolute path** of the folder which contains media and click on submit.
+-   On the new page, you will need to select the media you want to play. It will play successfully if it is supported by your browser otherwise you will get an error.

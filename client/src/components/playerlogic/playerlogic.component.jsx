@@ -34,7 +34,7 @@ const PlayerLogic = () => {
 	// };
 
 	const resetInput = () => {
-		setCount(0);
+		setCount(-1);
 		setLocationDir("");
 		videoFile.current = [];
 		setFilePresent(false);
@@ -121,11 +121,11 @@ const PlayerLogic = () => {
 			<div
 				className={`${
 					filePresent ? "" : "hidden"
-				} w-screen h-[10rem] mt-14 lg:w-[70%] lg:h-[80%] lg:mt-0 flex flex-col justify-center`}
+				} w-screen h-[10rem] mt-14 lg:w-[60%] lg:h-[80%] lg:mt-0 flex flex-col justify-center`}
 			>
 				<ReactPlayer
 					url={`${
-						filePresent
+						filePresent && count !== -1
 							? `http://${serverIP}:${serverPort}/videos/${count}`
 							: ""
 					}`}
@@ -243,10 +243,10 @@ const PlayerLogic = () => {
 								onClick={handleClick}
 								variant="contained"
 								color="primary"
-								size="large"
+								size="medium"
 							>
 								{count === -1
-									? "Select a video"
+									? "Select a media"
 									: videoFile.current[count]}
 							</Button>
 							<Menu
