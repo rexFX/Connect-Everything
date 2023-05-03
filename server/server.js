@@ -45,7 +45,7 @@ const fileAdder = (location) => {
     else msg = 'success'
   }
   catch {
-    msg = 'send valid path';
+    msg = 'Path is not valid / Path does not exist';
   }
 };
 
@@ -71,10 +71,7 @@ app.post('/setLocation', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  if (files.length) {
-    res.json(files);
-  }
-  else res.send('Connected');
+  res.send('Connected');
 });
 
 

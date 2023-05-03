@@ -1,13 +1,16 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ReactPlayer from "react-player";
 import "./playerlogic.styles.css";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
 
 const PlayerLogic = () => {
-	const [videoFile, setVideoFile] = useState([]);
+	const videoFile = useRef([]);
 	const [filePresent, setFilePresent] = useState(false);
 	const [locationDir, setLocationDir] = useState("");
-	const [count, setCount] = useState(0);
+	const [count, setCount] = useState(-1);
 	const [serverIP, setServerIP] = useState("");
 	const [serverPort, setServerPort] = useState("");
 	const [checkIPandPort, setCheckIPandPort] = useState(false);
@@ -15,6 +18,14 @@ const PlayerLogic = () => {
 	const [tempPort, setTempPort] = useState("");
 	const [mediaFilePlaybackError, setMediaFilePlaybackError] = useState(false);
 	const [errorText, setErrorText] = useState("");
+	const [anchorEl, setAnchorEl] = useState(null);
+	const open = Boolean(anchorEl);
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
 	// const videoFileHandler = (event) => {
 	// 	console.log(event.target.files);
@@ -23,8 +34,9 @@ const PlayerLogic = () => {
 	// };
 
 	const resetInput = () => {
+		setCount(0);
 		setLocationDir("");
-		setVideoFile([]);
+		videoFile.current = [];
 		setFilePresent(false);
 		setErrorText("");
 		axios
@@ -84,27 +96,70 @@ const PlayerLogic = () => {
 				locationDir,
 			})
 			.then((res) => {
-				setVideoFile(res.data);
+				videoFile.current = res.data;
 				setFilePresent(true);
 				setErrorText("");
 			})
 			.catch((err) => {
-				setVideoFile([]);
+				videoFile.current = [];
 				setFilePresent(false);
 				setErrorText(err.response.data);
 			});
 	};
 
 	const videoChooser = (event) => {
-		setCount(event.target.name);
+		setCount(event.target.id);
 		setMediaFilePlaybackError(false);
-		console.log(count);
 	};
 
 	return (
-		<>
-			{!checkIPandPort && (
-				<form onSubmit={ipAndPortSubmit}>
+		<div
+			className={`h-screen w-screen fixed bg-gradient-to-r from-slate-500 to-yellow-100 flex flex-col lg:flex-row lg:items-center lg:justify-evenly ${
+				filePresent ? "" : "justify-center items-center"
+			}`}
+		>
+			<div
+				className={`${
+					filePresent ? "" : "hidden"
+				} w-screen h-[10rem] mt-14 lg:w-[70%] lg:h-[80%] lg:mt-0 flex flex-col justify-center`}
+			>
+				<ReactPlayer
+					url={`${
+						filePresent
+							? `http://${serverIP}:${serverPort}/videos/${count}`
+							: ""
+					}`}
+					height="100%"
+					width="100%"
+					config={{
+						file: {
+							attributes: {
+								preload: "metadata",
+							},
+						},
+					}}
+					controls={true}
+					onError={() => setMediaFilePlaybackError(true)}
+				/>
+				{mediaFilePlaybackError && count !== -1 && (
+					<div className="text-center text-red-700 pt-6 font-Poppins">
+						Media file is not supported
+					</div>
+				)}
+			</div>
+
+			<div className="flex flex-col justify-center items-center md:scale-110 lg:scale-125">
+				<h1
+					className={`text-center font-Poppins pb-8 text-2xl font-bold text-white ${
+						filePresent ? "hidden" : "block"
+					}`}
+				>
+					Connect Everything
+				</h1>
+				<form
+					className={`${!checkIPandPort ? "block" : "hidden"}`}
+					onSubmit={ipAndPortSubmit}
+				>
 					<div className="font-Poppins text-center flex flex-col justify-center items-center">
 						<input
 							id="ipInput"
@@ -125,11 +180,11 @@ const PlayerLogic = () => {
 					</div>
 					<div className="flex flex-col justify-center items-center">
 						<div className="flex justify-evenly w-[20em] mt-4 font-Poppins">
-							<button className="transition bg-red-400 w-[7em] h-[3em] hover:bg-red-600 hover:delay-50">
+							<button className="transition bg-red-400 w-[7em] h-[2.5em] rounded-md hover:bg-red-600 hover:delay-50">
 								Submit
 							</button>
 							<button
-								className="transition bg-gray-400 w-[7em] h-[3em] hover:bg-slate-500 hover:delay-50"
+								className="transition bg-gray-400 w-[7em] h-[2.5em] rounded-md hover:bg-slate-500 hover:delay-50"
 								onClick={ipPortAndBelowReset}
 								type="button"
 							>
@@ -143,78 +198,81 @@ const PlayerLogic = () => {
 						)}
 					</div>
 				</form>
-			)}
 
-			{checkIPandPort && (
-				<form onSubmit={locationSubmit}>
-					<div className="mb-3">
-						<label htmlFor="locationInput" className="form-label">
-							Enter the absolute path of directory
-						</label>
-						<input
-							id="locationInput"
-							className="form-control"
-							type="text"
-							value={locationDir}
-							onChange={inputLocationHandler}
-						/>
-					</div>
-					{errorText.length > 0 && <div>{errorText}</div>}
-					<div className="d-flex justify-content-between m-2">
-						<button className="btn btn-primary border border-3">
-							Submit
-						</button>
-						<button
-							className="btn btn-secondary border border-3"
-							onClick={resetInput}
-							type="button"
+				<div className={`${filePresent ? "mt-16" : ""}`}>
+					<form
+						className={`${checkIPandPort ? "block" : "hidden"}`}
+						onSubmit={locationSubmit}
+					>
+						<div
+							className={`font-Poppins text-center flex flex-col justify-center items-center`}
 						>
-							Reset
-						</button>
-					</div>
-				</form>
-			)}
-
-			<div className="container-sm">
-				<div className="btn-group-vertical">
-					{videoFile.map((file, index) => {
-						return (
-							<button
-								type="button"
-								className="btn btn-primary"
-								name={index}
-								onClick={videoChooser}
-								key={index}
+							<input
+								id="locationInput"
+								className={`max-w-[80%] md:max-w-[90%] h-10 p-3 rounded-md bg-slate-100 outline-gray-300 outline-1 outline-offset-1`}
+								type="text"
+								value={locationDir}
+								placeholder="Enter the absolute path of directory"
+								onChange={inputLocationHandler}
+							/>
+						</div>
+						<div className="flex flex-col justify-center items-center">
+							<div className="flex justify-evenly w-[20em] mt-4 font-Poppins">
+								<button className="transition bg-red-400 w-[7em] h-[2.5em] rounded-md hover:bg-red-600 hover:delay-50">
+									Submit
+								</button>
+								<button
+									className={`transition bg-gray-400 w-[7em] h-[2.5em] rounded-md hover:bg-slate-500 hover:delay-50`}
+									onClick={resetInput}
+									type="button"
+								>
+									Reset
+								</button>
+							</div>
+							{errorText.length > 0 && (
+								<div className="text-red-700 pt-6 font-Poppins">
+									{errorText}
+								</div>
+							)}
+						</div>
+					</form>
+					{filePresent && (
+						<div className="mt-4 transition max-w-[22em] max-h-[15em] rounded-md flex justify-center">
+							<Button
+								id="demo-positioned-button"
+								onClick={handleClick}
+								variant="contained"
+								color="primary"
+								size="large"
 							>
-								{file}
-							</button>
-						);
-					})}
+								{count === -1
+									? "Select a video"
+									: videoFile.current[count]}
+							</Button>
+							<Menu
+								anchorEl={anchorEl}
+								open={open}
+								onClose={handleClose}
+							>
+								{videoFile.current.map((file, index) => {
+									return (
+										<MenuItem
+											key={index}
+											onClick={(event) =>
+												videoChooser(event)
+											}
+											id={index}
+										>
+											{file}
+										</MenuItem>
+									);
+								})}
+							</Menu>
+						</div>
+					)}
 				</div>
-				{filePresent && (
-					<div>
-						<ReactPlayer
-							className="video-player"
-							url={`http://${serverIP}:${serverPort}/videos/${count}`}
-							width="50%"
-							height="50%"
-							config={{
-								file: {
-									attributes: {
-										preload: "metadata",
-									},
-								},
-							}}
-							controls={true}
-							onError={() => setMediaFilePlaybackError(true)}
-						/>
-						{mediaFilePlaybackError && (
-							<div>Media file is not supported</div>
-						)}
-					</div>
-				)}
 			</div>
-		</>
+		</div>
 	);
 };
 

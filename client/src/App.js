@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router";
-import Home from "./routes/home/home.component";
+import PlayerLogic from "./components/playerlogic/playerlogic.component";
 
 const App = () => {
   return (
     <Routes>
-      <Route index element={<Home />} />
+      <Route index element={<PlayerLogic />} />
     </Routes>
   );
 };
