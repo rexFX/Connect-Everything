@@ -5,6 +5,7 @@ A self-hosted media streaming server which can transmit locally stored media fil
 ### Screenshots:
 
 -   Server
+
     ![Server](/public/server.png)
 
 -   Initial page
