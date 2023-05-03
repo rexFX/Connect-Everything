@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState, useRef } from "react";
 import ReactPlayer from "react-player";
-import "./playerlogic.styles.css";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
